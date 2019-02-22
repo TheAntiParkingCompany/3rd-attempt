@@ -1,0 +1,188 @@
+---
+swagger: "2.0"
+info:
+  description: ""
+  version: "1.6.0"
+  title: "parkingtestapi"
+  contact:
+    name: "antiparkparking@gmail.com"
+    email: "antiparkparking@gmail.com"
+host: "anti-parking-api.herokuapp.com"
+schemes:
+- "https"
+paths:
+  /stickers/:
+    post:
+      summary: "Create Stickers"
+      description: "Creates a number of stickers"
+      operationId: "stickersPOST"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/StickerRequest"
+      responses:
+        200:
+          description: "We have created stickers for you!"
+          schema:
+            $ref: "#/definitions/StickerResponse"
+      x-swagger-router-controller: "Default"
+    x-restlet:
+      section: "Stickers"
+  /incidents/:
+    post:
+      summary: "Create Incident"
+      description: "Reports an incident of bad parking"
+      operationId: "incidentsPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/IncidentReport"
+      responses:
+        200:
+          description: "Status 200"
+      x-swagger-router-controller: "Default"
+    x-restlet:
+      section: "Incidents"
+  /incidents/{sticker_uuid}:
+    get:
+      summary: "Search Incident"
+      description: "Checks if an incident exist/ has been reported and a sticker has\
+        \ been used"
+      operationId: "incidentsSticker_uuidGET"
+      parameters:
+      - name: "sticker_uuid"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "The sticker has been reported!"
+        404:
+          description: "The sticker has not been reported!"
+      x-swagger-router-controller: "Default"
+    x-restlet:
+      section: "Incidents"
+  /responses:
+    post:
+      summary: "Create Response"
+      description: "Creates a response"
+      operationId: "responsesPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/IncidentResponse"
+      responses:
+        200:
+          description: "We noted your response"
+        400:
+          description: "We already noted this response"
+      x-swagger-router-controller: "Default"
+    x-restlet:
+      section: "Responses"
+  /responses/{sticker_uuid}:
+    get:
+      summary: "Get Response"
+      description: "Checks if a response has been submited"
+      operationId: "responsesSticker_uuidGET"
+      parameters:
+      - name: "sticker_uuid"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "We found the response!"
+        404:
+          description: "We didn't find the response!"
+      x-swagger-router-controller: "Default"
+    x-restlet:
+      section: "Responses"
+definitions:
+  Sticker:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "UUID"
+    description: "Represents a sticker placed on a perp's car. "
+    example:
+      id: "id"
+    x-restlet:
+      section: "Stickers"
+  StickerRequest:
+    type: "object"
+    required:
+    - "num_requested"
+    properties:
+      num_requested:
+        type: "integer"
+        description: "the number of stickers requested"
+    description: "Used to specify number of stickers required"
+    example:
+      num_requested: 0
+    x-restlet:
+      section: "Stickers"
+  StickerResponse:
+    type: "object"
+    required:
+    - "stickers"
+    properties:
+      stickers:
+        type: "array"
+        items:
+          $ref: "#/definitions/Sticker"
+    description: "a set of stickers"
+    example:
+      stickers:
+      - id: "id"
+      - id: "id"
+    x-restlet:
+      section: "Stickers"
+  IncidentReport:
+    type: "object"
+    required:
+    - "sticker_uuid"
+    properties:
+      sticker_uuid:
+        type: "string"
+    description: "Specify a sticker placed on a perp's car. Report an incident of\
+      \ bad parking"
+    example:
+      sticker_uuid: "sticker_uuid"
+    x-restlet:
+      section: "Incidents"
+  IncidentResponse:
+    type: "object"
+    required:
+    - "sticker_uuid"
+    properties:
+      sticker_uuid:
+        type: "string"
+      has_apologised:
+        type: "boolean"
+    description: "This is a response to a particular incident identified by a particular\
+      \ uuid and containing the perp's communication."
+    example:
+      has_apologised: true
+      sticker_uuid: "sticker_uuid"
+    x-restlet:
+      section: "Responses"
+x-restlet:
+  sections:
+    Stickers: {}
+    Incidents: {}
+    Responses: {}
