@@ -73,9 +73,25 @@ var initialise = function (url, needsSSL) {
       return result;
   }
 
+  var postStickers=async function(body)
+  {
+      var result=null;
+      var parameters=[body];
+      var query = "INSERT INTO public.Stickers(generated) VALUES ('true') RETURNING QRid,generated;"
+      try{
+        var response=await thePool.query(query,parameters);
+        result=response.rows;
+    }catch(e){
+        throw(createError(errors.PARAMETER_ERROR,e.message));
+    }
+    return result;
+
+  }
+
   module.exports={
       errors:errors,
       initialise:initialise,
       getIncidents:getIncidents,
-      getResponses:getResponses
+      getResponses:getResponses,
+      postStickers:postStickers
   };

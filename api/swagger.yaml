@@ -7,9 +7,9 @@ info:
   contact:
     name: "antiparkparking@gmail.com"
     email: "antiparkparking@gmail.com"
-host: "anti-parking-api.herokuapp.com"
+host: "localhost:8080"
 schemes:
-- "https"
+- "http"
 paths:
   /stickers/:
     post:

@@ -95,8 +95,12 @@ exports.responsesSticker_uuidGET = function(sticker_uuid) {
  * returns StickerResponse
  **/
 exports.stickersPOST = function(body) {
+
   return new Promise(function(resolve, reject) {
-    database.stickersPOST(sticker_uuid)
+
+    console.log(database.postStickers);
+  
+    database.postStickers(body)
     .then(resolve)
     .catch(function(e)
     {switch(e.statusCode){
@@ -112,13 +116,14 @@ exports.stickersPOST = function(body) {
       break;}
     })
     var examples = {};
+
     examples['application/json'] = {
-  "stickers" : [ {
-    "id" : "id"
-  }, {
-    "id" : "id"
-  } ]
-};
+      "stickers" : [
+        { "id" : "id" },
+        { "id" : "id" }
+      ]
+    };
+
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
