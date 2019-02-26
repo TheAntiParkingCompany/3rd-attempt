@@ -9,6 +9,12 @@ var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
 var serverPort = process.env.PORT || 8080;
 
+var database=require('./service/database');
+var dbUrl=process.env.DATABASE_URL;
+
+//database connection
+database.initialise(dbUrl,true);
+
 // swaggerRouter configuration
 var options = {
   swaggerUi: path.join(__dirname, '/swagger.json'),

@@ -24,7 +24,22 @@ exports.incidentsPOST = function(body) {
  **/
 exports.incidentsSticker_uuidGET = function(sticker_uuid) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    database.getIncidents(sticker_uuid)
+    .then(resolve)
+         .catch(function(e){
+            switch(e.statusCode){
+              case database.errors.DATABASE_ERROR:
+              // remove database specific error - will leak information.
+              reject (errApi.create500Error("something terrible happened with the database. Sorry..."));
+              break;
+              case database.errors.INTERNAL_ERROR:
+              reject(errApi.create500Error(e.message));
+              break;
+              case database.errors.PARAMETER_ERROR:
+              reject(errApi.create400Error(e.message));
+              break;
+            }
+          })
   });
 }
 
@@ -52,7 +67,22 @@ exports.responsesPOST = function(body) {
  **/
 exports.responsesSticker_uuidGET = function(sticker_uuid) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    database.getStickers(sticker_uuid)
+    .then(resolve)
+         .catch(function(e){
+            switch(e.statusCode){
+              case database.errors.DATABASE_ERROR:
+              // remove database specific error - will leak information.
+              reject (errApi.create500Error("something terrible happened with the database. Sorry..."));
+              break;
+              case database.errors.INTERNAL_ERROR:
+              reject(errApi.create500Error(e.message));
+              break;
+              case database.errors.PARAMETER_ERROR:
+              reject(errApi.create400Error(e.message));
+              break;
+            }
+         })
   });
 }
 
