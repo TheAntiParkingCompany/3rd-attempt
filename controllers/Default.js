@@ -49,6 +49,8 @@ module.exports.responsesSticker_uuidGET = function responsesSticker_uuidGET (req
 
 module.exports.stickersPOST = function stickersPOST (req, res, next) {
   var body = req.swagger.params['body'].value;
+  console.log("body", body);
+  console.log("num", body.num_requested);
   Default.stickersPOST(body)
     .then(function (response) {
       utils.writeJson(res, response);

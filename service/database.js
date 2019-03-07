@@ -45,9 +45,8 @@ var initialise = function (url, needsSSL) {
   var getIncidents=async function(sticker_uuid)
   {
       var result=null;
-      var sticker_uuid_comp='($1::text is null or sticker_uuid=$1)';
-
-      var query=sticker_uuid_comp+";";
+      
+      var query="SELECT * FROM public.\"Incidents\" where public.\"Incidents\".\"QRid\"=$1;";
       var parameters = [sticker_uuid];
       try{
           var response=await thePool.query(query,parameters);
@@ -61,8 +60,8 @@ var initialise = function (url, needsSSL) {
   var getResponses=async function(sticker_uuid)
   {
       var result=null;
-      var sticker_uuid_comp='($1::text is null or sticker_uuid=$1)';
-      var query=sticker_uuid_comp+";";
+      
+      var query="SELECT * FROM public.\"Response\" where public.\"Response\".\"id\"=$1;";
       var parameters = [sticker_uuid];
       try{
           var response=await thePool.query(query,parameters);
@@ -75,9 +74,35 @@ var initialise = function (url, needsSSL) {
 
   var postStickers=async function(body)
   {
+      var result=[];
+      var parameters=[true];
+      
+      for(var index=0;index<body.num_requested;index++)
+      {var query = "INSERT INTO \"public\".\"Stickers\" (\"generated\") VALUES ($1) RETURNING \"QRid\",\"generated\";";
+      try
+      {
+        var response=await thePool.query(query,parameters);
+        var rows=response.rows;
+        if(rows && rows.length>0)
+        {
+            result.push({id:rows[0].QRid});
+        }
+    }catch(e){
+        throw(createError(errors.PARAMETER_ERROR,e.message));
+    }}
+    return result;
+
+
+  }
+  var postIncidents=async function(body)
+  {
       var result=null;
-      var parameters=[body];
-      var query = "INSERT INTO public.Stickers(generated) VALUES ('true') RETURNING QRid,generated;"
+      //var parameters=[date,postcode,lat,lon];
+
+      var parameters=[body.sticker_uuid,body.date];
+      
+      var query = "INSERT INTO \"public\".\"Incidents\" (\"QRid\",\"date\") VALUES ($1,$2) RETURNING \"id\";";
+      //var query = "INSERT INTO \"public\".\"Incidents\" (\"QRid\",\"date\",\"postcode\",\"lat\",\"lon\") VALUES ($1,$2,$3,$4,$5) RETURNING \"id\",\"QRid\",\"date\",\"postcode\",\"lat\",\"lon\";";
       try{
         var response=await thePool.query(query,parameters);
         result=response.rows;
@@ -86,6 +111,28 @@ var initialise = function (url, needsSSL) {
     }
     return result;
 
+
+  }
+  var postResponse=async function(body)
+  {
+      var result=null;
+      console.log(body);
+      var has_apologised= body.has_apologised;
+      var sticker_uuid= body.sticker_uuid;
+      var parameters=[has_apologised,sticker_uuid];
+      
+      
+      //var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\",\"apologyRec\",\"apologyPN\") VALUES ($1,$2,$3,$4) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
+      var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1) RETURNING \"id\",\"report\";";
+      try{
+        var response=await thePool.query(query,parameters);
+        result=response.rows;
+    }catch(e){
+        throw(createError(errors.PARAMETER_ERROR,e.message));
+    }
+    return result;
+
+
   }
 
   module.exports={
@@ -93,5 +140,7 @@ var initialise = function (url, needsSSL) {
       initialise:initialise,
       getIncidents:getIncidents,
       getResponses:getResponses,
-      postStickers:postStickers
+      postStickers:postStickers,
+      postIncidents:postIncidents,
+      postResponse:postResponse
   };

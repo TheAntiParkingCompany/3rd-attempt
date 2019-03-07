@@ -1,6 +1,6 @@
 'use strict';
 
-
+var database = require('./database');
 /**
  * Create Incident
  * Reports an incident of bad parking
@@ -10,7 +10,23 @@
  **/
 exports.incidentsPOST = function(body) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    console.log(database.postStickers);
+    body.date=Math.floor(new Date().getTime()/1000.0);
+    database.postIncidents(body)
+    .then(resolve)
+    .catch(function(e)
+    {switch(e.statusCode){
+      case database.errors.DATABASE_ERROR:
+      // remove database specific error - will leak information.
+      reject (errApi.create500Error("something terrible happened with the database. Sorry..."));
+      break;
+      case database.errors.INTERNAL_ERROR:
+      reject(errApi.create500Error(e.message));
+      break;
+      case database.errors.PARAMETER_ERROR:
+      reject(errApi.create400Error(e.message));
+      break;}
+    })
   });
 }
 
@@ -22,7 +38,8 @@ exports.incidentsPOST = function(body) {
  * sticker_uuid String 
  * no response value expected for this operation
  **/
-exports.incidentsSticker_uuidGET = function(sticker_uuid) {
+exports.incidentsSticker_uuidGET = function(sticker_uuid) { 
+  console.log(sticker_uuid);
   return new Promise(function(resolve, reject) {
     database.getIncidents(sticker_uuid)
     .then(resolve)
@@ -53,7 +70,23 @@ exports.incidentsSticker_uuidGET = function(sticker_uuid) {
  **/
 exports.responsesPOST = function(body) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    //console.log(database.postResponse);
+  
+    database.postResponse(body)
+    .then(resolve)
+    .catch(function(e)
+    {switch(e.statusCode){
+      case database.errors.DATABASE_ERROR:
+      // remove database specific error - will leak information.
+      reject (errApi.create500Error("something terrible happened with the database. Sorry..."));
+      break;
+      case database.errors.INTERNAL_ERROR:
+      reject(errApi.create500Error(e.message));
+      break;
+      case database.errors.PARAMETER_ERROR:
+      reject(errApi.create400Error(e.message));
+      break;}
+    })
   });
 }
 
@@ -67,7 +100,7 @@ exports.responsesPOST = function(body) {
  **/
 exports.responsesSticker_uuidGET = function(sticker_uuid) {
   return new Promise(function(resolve, reject) {
-    database.getStickers(sticker_uuid)
+    database.getResponses(sticker_uuid)
     .then(resolve)
          .catch(function(e){
             switch(e.statusCode){
@@ -101,7 +134,9 @@ exports.stickersPOST = function(body) {
     console.log(database.postStickers);
   
     database.postStickers(body)
-    .then(resolve)
+    .then(function(result){ 
+      resolve(result);
+    })
     .catch(function(e)
     {switch(e.statusCode){
       case database.errors.DATABASE_ERROR:
@@ -115,20 +150,9 @@ exports.stickersPOST = function(body) {
       reject(errApi.create400Error(e.message));
       break;}
     })
-    var examples = {};
+    
 
-    examples['application/json'] = {
-      "stickers" : [
-        { "id" : "id" },
-        { "id" : "id" }
-      ]
-    };
-
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+    
   });
 }
 
