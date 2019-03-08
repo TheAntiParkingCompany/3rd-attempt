@@ -7,7 +7,7 @@ info:
   contact:
     name: "antiparkparking@gmail.com"
     email: "antiparkparking@gmail.com"
-host: "anti-parking-api.herokuapp.com/"
+host: "anti-parkin-api.herokuapp.com"
 schemes:
 - "https"
 paths:

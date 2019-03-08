@@ -1,0 +1,15 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/index.js",
+            "env":{"DATABASE_URL":"postgres://skfaalrcrakwod:d303bbd2040fa112d0b05f80ba721b0f3497ac903b001231db79daf23e641f1e@ec2-54-75-227-10.eu-west-1.compute.amazonaws.com:5432/d63jqch17lfifq"}
+        }
+    ]
+}
