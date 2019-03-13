@@ -77,15 +77,17 @@ exports.responsesPOST = function(body) {
     .catch(function(e)
     {switch(e.statusCode){
       case database.errors.DATABASE_ERROR:
-      // remove database specific error - will leak information.
-      reject (errApi.create500Error("something terrible happened with the database. Sorry..."));
-      break;
+        // remove database specific error - will leak information.
+        reject (errApi.create500Error("something terrible happened with the database. Sorry..."));
+        break;
       case database.errors.INTERNAL_ERROR:
-      reject(errApi.create500Error(e.message));
-      break;
+        console.log("nah, 1",body,e);
+        reject(errApi.create500Error(e.message));
+        break;
       case database.errors.PARAMETER_ERROR:
-      reject(errApi.create400Error(e.message));
-      break;}
+        console.log("nah 2", body,e);
+        reject(errApi.create400Error(e.message));
+        break;}
     })
   });
 }

@@ -115,24 +115,70 @@ var initialise = function (url, needsSSL) {
   }
   var postResponse=async function(body)
   {
-      var result=null;
-      console.log(body);
-      var has_apologised= body.has_apologised;
-      var sticker_uuid= body.sticker_uuid;
-      var parameters=[has_apologised,sticker_uuid];
-      
-      
-      //var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\",\"apologyRec\",\"apologyPN\") VALUES ($1,$2,$3,$4) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
-      var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1) RETURNING \"id\",\"report\";";
-      try{
+    var result=null;
+    console.log(body);
+    var has_apologised= body.has_apologised;
+    var sticker_uuid= body.sticker_uuid;
+    var queryselect =0;
+    var apologyPN=0;
+    var apologyRec=false;
+    var parameters;
+    var query="";
+    
+    if (body.apologyRec!=null)
+    {
+        apologyRec=body.apologyRec;
+        queryselect+=2;
+    }
+    if (body.apologyPN!=null)
+    {
+        apologyPN=body.apologyPN;
+        queryselect+= 1;
+    }
+
+    switch(queryselect){
+        case 0: //if only has_apologised and sticker_uuid are present
+        var parameters=[has_apologised,sticker_uuid];
+        var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
+        break;
+        case 1: //if only has_apologised, sticker_uuid and apologyPN are present
+        var parameters=[has_apologised,sticker_uuid,apologyPN];
+        var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\",\"apologyPN\") VALUES ($2,$1,$3) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
+        break;
+        case 2: //if only has_apologised, sticker_uuid and apologyPN are present
+        var parameters=[has_apologised,sticker_uuid,apologyRec];
+        var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\",\"apologyRec\") VALUES ($2,$1,$3) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
+        break;
+        case 3: //if only has_apologised, sticker_uuid and apologyPN are present
+        var parameters=[has_apologised,sticker_uuid,apologyRec,apologyPN];
+        var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\",\"apologyRec\",\"apologyPN\") VALUES ($2,$1,$3,$4) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
+        break;
+        default:
+        break;
+
+    }
+/*     if ((apologyPN!=null)&&(apologyRec!=null))
+    {
+        parameters=[has_apologised,sticker_uuid,apologyPN,apologyRec];
+        query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1,$3,$4) RETURNING \"id\",\"report\";";
+    }
+    if ((apologyPN!=null)&&(apologyRec!=null))
+    {
+        parameters=[has_apologised,sticker_uuid,apologyPN,apologyRec];
+        query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1,$3,$4) RETURNING \"id\",\"report\";";
+    } */
+    //var btnPressed=false;
+    //var btnPN=0;
+    //      var parameters=[has_apologised,sticker_uuid];
+    //var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\",\"apologyRec\",\"apologyPN\") VALUES ($1,$2,$3,$4) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
+    //      var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1) RETURNING \"id\",\"report\";";
+    try{
         var response=await thePool.query(query,parameters);
         result=response.rows;
     }catch(e){
         throw(createError(errors.PARAMETER_ERROR,e.message));
     }
     return result;
-
-
   }
 
   module.exports={

@@ -7,9 +7,10 @@ info:
   contact:
     name: "antiparkparking@gmail.com"
     email: "antiparkparking@gmail.com"
-host: "anti-parking-api.herokuapp.com"
+
+host: "localhost:8080"
 schemes:
-- "https"
+- "http"
 paths:
   /stickers/:
     post:
@@ -174,11 +175,17 @@ definitions:
         type: "string"
       has_apologised:
         type: "boolean"
+      apologyRec:
+        type: "boolean"
+      apologyPN:
+        type: "integer"
     description: "This is a response to a particular incident identified by a particular\
       \ uuid and containing the perp's communication."
     example:
       has_apologised: true
       sticker_uuid: "sticker_uuid"
+      apologyRec: false
+      apologyPN: -1
     x-restlet:
       section: "Responses"
 x-restlet:
