@@ -99,10 +99,9 @@ var initialise = function (url, needsSSL) {
       var result=null;
       //var parameters=[date,postcode,lat,lon];
 
-      var parameters=[body.sticker_uuid,body.date];
+      var parameters=[body.sticker_uuid,body.date,body.postcode,body.lat,body.lon];
       
-      var query = "INSERT INTO \"public\".\"Incidents\" (\"QRid\",\"date\") VALUES ($1,$2) RETURNING \"id\";";
-      //var query = "INSERT INTO \"public\".\"Incidents\" (\"QRid\",\"date\",\"postcode\",\"lat\",\"lon\") VALUES ($1,$2,$3,$4,$5) RETURNING \"id\",\"QRid\",\"date\",\"postcode\",\"lat\",\"lon\";";
+      var query = "INSERT INTO \"public\".\"Incidents\" (\"QRid\",\"date\",\"postcode\",\"lat\",\"lon\") VALUES ($1,$2,$3,$4,$5) RETURNING \"id\";";
       try{
         var response=await thePool.query(query,parameters);
         result=response.rows;
