@@ -10,10 +10,6 @@ var database = require('./database');
  **/
 exports.incidentsPOST = function(body) {
   return new Promise(function(resolve, reject) {
-    //console.log(database.postStickers);
-    //console.log(body.lat);
-    //console.log(body.lon);
-    //console.log(body.postcode);
     body.date=Math.floor(new Date().getTime()/1000.0);
     database.postIncidents(body)
     .then(resolve)
@@ -73,8 +69,6 @@ exports.incidentsSticker_uuidGET = function(sticker_uuid) {
  **/
 exports.responsesPOST = function(body) {
   return new Promise(function(resolve, reject) {
-    //console.log(database.postResponse);
-  
     database.postResponse(body)
     .then(resolve)
     .catch(function(e)

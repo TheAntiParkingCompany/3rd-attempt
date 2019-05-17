@@ -41,7 +41,7 @@ var initialise = function (url, needsSSL) {
     await stall(500, createError(errors.PARAMETER_ERROR,"bad parameter!"));
     
   }
-
+//function to create a query to get an incident with a specific QR code id
   var getIncidents=async function(sticker_uuid)
   {
       var result=null;
@@ -56,7 +56,7 @@ var initialise = function (url, needsSSL) {
       }
       return result;
   }
-
+//function to create a query to get a response with a specific id
   var getResponses=async function(sticker_uuid)
   {
       var result=null;
@@ -71,7 +71,7 @@ var initialise = function (url, needsSSL) {
       }
       return result;
   }
-
+//function to create a query to create/insert a number of QR code stickers into the database upon generating them through the web page/server
   var postStickers=async function(body)
   {
       var result=[];
@@ -94,11 +94,10 @@ var initialise = function (url, needsSSL) {
 
 
   }
+  //function to create a query to create/insert incidents into the database upon a user reporting one
   var postIncidents=async function(body)
   {
       var result=null;
-      //var parameters=[date,postcode,lat,lon];
-
       var parameters=[body.sticker_uuid,body.date,body.postcode,body.lat,body.lon];
       
       var query = "INSERT INTO \"public\".\"Incidents\" (\"QRid\",\"date\",\"postcode\",\"lat\",\"lon\") VALUES ($1,$2,$3,$4,$5) RETURNING \"id\";";
@@ -109,9 +108,9 @@ var initialise = function (url, needsSSL) {
         throw(createError(errors.PARAMETER_ERROR,e.message));
     }
     return result;
-
-
   }
+
+  //function to create a query to save a response to an incident into the database
   var postResponse=async function(body)
   {
     var result=null;
@@ -124,7 +123,8 @@ var initialise = function (url, needsSSL) {
     var parameters;
     var query="";
     
-    if (body.apologyRec!=null)
+    //changes the queryselect variable to match the data present in the body so no null values are saved into the database
+    if (body.apologyRec!=null) 
     {
         apologyRec=body.apologyRec;
         queryselect+=2;
@@ -156,21 +156,6 @@ var initialise = function (url, needsSSL) {
         break;
 
     }
-/*     if ((apologyPN!=null)&&(apologyRec!=null))
-    {
-        parameters=[has_apologised,sticker_uuid,apologyPN,apologyRec];
-        query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1,$3,$4) RETURNING \"id\",\"report\";";
-    }
-    if ((apologyPN!=null)&&(apologyRec!=null))
-    {
-        parameters=[has_apologised,sticker_uuid,apologyPN,apologyRec];
-        query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1,$3,$4) RETURNING \"id\",\"report\";";
-    } */
-    //var btnPressed=false;
-    //var btnPN=0;
-    //      var parameters=[has_apologised,sticker_uuid];
-    //var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\",\"apologyRec\",\"apologyPN\") VALUES ($1,$2,$3,$4) RETURNING \"id\",\"report\",\"apologyRec\",\"apologyPN\";";
-    //      var query = "INSERT INTO \"public\".\"Response\" (\"id\",\"report\") VALUES ($2,$1) RETURNING \"id\",\"report\";";
     try{
         var response=await thePool.query(query,parameters);
         result=response.rows;
